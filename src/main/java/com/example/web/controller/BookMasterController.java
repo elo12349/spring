@@ -1,8 +1,15 @@
 package com.example.web.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+
+import com.example.entity.TblAdmin;
+import com.example.service.TblAdminService;
 
 /**
  * 
@@ -17,12 +24,26 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
+@RequestMapping("/")
 public class BookMasterController {
-
-	@RequestMapping("/")
-	public ModelAndView init(ModelAndView view) {
-		view.setViewName("bookMaster");
-
-		return view;
+	
+	@Autowired
+	public TblAdminService TblAdminservice;
+	
+	@GetMapping("/")
+	public String Loginpage(Model model) {
+		 if (!model.containsAttribute("Tbladmin")) {
+	            model.addAttribute("Tbladmin", new TblAdmin());
+	        }
+		return "postgres";
+	}
+	@PostMapping(value = "/", params = "login_button")
+	public String Login(@ModelAttribute("Tbladmin") TblAdmin Tbladmin) {
+		boolean found = TblAdminservice.Login(Tbladmin.getAdminId(), Tbladmin.getPassword());
+		if(found) {
+			return "success";
+		}else {
+			return "false";
+		}
 	}
 }
